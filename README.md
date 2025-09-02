@@ -70,11 +70,11 @@ Observations:
 
 The badly spliced data (false starts) appears to be contained within the first 124 samples, so those are discarded, leaving 4874 waveforms remaining for the test-train split.
 
-### Baseline Statistical Model: Similarity Threshold vs Class Template
+### Baseline Model: Median Template Matching / Similarity Threshold vs Class Template
 
-Before feature engineering and ML models are trained, a statistical baseline is established.
+Before feature engineering and ML models are trained, a baseline is established by comparing each waveform against a single median waveform template.
 
-The statistical baseline approach:
+The approach:
 1. Compute a baseline template as a point-by-point median filter of the Normal class (y==0) waveforms in the Training set.
 2. Split data into Training and Test sets.
 3. For each sample in the Training set, compute the similarity to the template.
@@ -89,9 +89,9 @@ The statistical baseline approach:
 
 ![Baseline Model Score, Test](images/baseline-score-Test-mse.png)
 
-**Figure 4: Baseline Statistical Model Score (using MSE) (Top: Training; Bottom: Test)**
+**Figure 4: Baseline Model Score (using MSE) (Top: Training; Bottom: Test)**
 
-**Table 1: Baseline Statistical Model (using MSE) Score**
+**Table 1: Baseline Model (using MSE) Score**
 ```
             Training    Test
 Threshold :	0.457		0.457
@@ -102,9 +102,9 @@ Time      : 1.7 s
 
 The process was also repeated using the cross correlation coefficient (rather, the inverse thereof, to be consistent with MSE: smaller number is more similar) as a similarity metric with comparable results, but the training time was cut approximately in half.
 
-**Figure 5: Baseline Statistical Model Score (using xcor) (Top: Training; Bottom: Test)**
+**Figure 5: Baseline Model Score (using xcor) (Top: Training; Bottom: Test)**
 
-**Table 2: Baseline Statistical Model (using xcor) Score**
+**Table 2: Baseline Model Score (using xcor)**
 
 ![Baseline Model Score, Test](images/baseline-score-Training-xcor.png)
 
@@ -134,6 +134,8 @@ Varying the random seed (affecting only the first selected template), the follow
 
 **Figure 6: Visualization of selected templates with different random seeds**
 
+It took about 20 seconds to extract the features.
+
 ### Modeling: Logistic Regression
 
 The engineered features are fed into a Logistic Regression model, with 5-fold cross-validation and a small grid search for `C` parameter. The scoring of the model can be found below.
@@ -162,12 +164,20 @@ The weights are binned as follows:
 
 ## Results
 
+**Table 2: Model Comparison**
+
 | model_name           |   train_time |   train_acc |   train_f3 |   test_acc |   test_f3 |
 |:---------------------|-------------:|------------:|-----------:|-----------:|----------:|
-| Baseline mse         |       1.8738 |      0.9308 |     0.9873 |     0.9245 |    0.9863 |
-| Baseline xcor        |       0.821  |      0.9297 |     0.9875 |     0.9237 |    0.9873 |
-| Logistic             |       0.0095 |      0.9852 |     0.9931 |     0.9803 |    0.99   |
-| Logistic (seed 1138) |       0.023  |      0.985  |     0.9927 |     0.9795 |    0.9899 |
+| Baseline (mse)       |       1.8738 |      0.9308 |     0.9873 |     0.9245 |    0.9863 |
+| Baseline (xcor)      |       0.8210 |      0.9297 |     0.9875 |     0.9237 |    0.9873 |
+| Logistic             |       0.0095 |      0.9852 |     0.9931 |     0.9803 |    0.9900 |
+| Logistic (seed 1138) |       0.0230 |      0.9850 |     0.9927 |     0.9795 |    0.9899 |
+
+Observations:
+* The baseline model (median template matching) performed almost identically regardless of which similarity metric was used.
+* The Logistic Regression model scores significantly higher than the baseline because it is able to match sample waveforms against 8 templates instead of the single median templates, and gains the ability to describe more morphological features.
+* There's a distinct difference between training time of the two represented Logistic models, but they should be approximately the same.
+    * Author's Note: I will repeat these measurements in the second Capstone submission, but I'm out of time for the first submission.
 
 ## Next steps
 * Try de-trending the input waveforms
