@@ -47,17 +47,23 @@ The data contains 5000 time series of ECG data, labeled as normal or abnormal. C
 
 ### Exploratory Data Analysis
 
+Here's a first glance at the data: two sets of 20 Normal waveforms on the left, and two sets of Abnormal waveforms on the right.
+
+![](images/visualization1.png)
+
+**Figure 1: Initial Data Visualization**
+
 To identify a Normal waveform, it may be useful to identify what a "typical" Normal waveform looks like. For this purpose, the data is split by class, and the waveforms classified as Normal are median-filtered, point-by-point.
 
 ![](images/normal-median-template.png)
 
-**Figure 1: Normal Median Template**
+**Figure 2: Normal Median Template**
 
 Now compare the similarity of each waveform to this Normal median template and look for anomalies. Similarity metrics used were mean squared error (MSE) and cross correlation coefficient. The following visualization was taken using MSE.
 
 ![Visualization of Lowest Similarity Waveforms: All Data](images/visualization-lowsim-all.png)
 
-**Figure 2: Visualization of Lowest Similarity Waveforms**
+**Figure 3: Visualization of Lowest Similarity Waveforms**
 
 Observations:
 * Both the Normal and Abnormal waveforms present in a few distinct forms that seem legitimate, but some look like they were sliced improperly.
@@ -83,13 +89,13 @@ The approach:
 
 ![Normal Class Baseline Template](images/baseline-normal-template-train.png)
 
-**Figure 3: Normal Class Baseline Template**
+**Figure 4: Normal Class Baseline Template**
 
 ![Baseline Model Score, Training](images/baseline-score-Training-mse.png)
 
 ![Baseline Model Score, Test](images/baseline-score-Test-mse.png)
 
-**Figure 4: Baseline Model Score (using MSE) (Top: Training; Bottom: Test)**
+**Figure 5: Baseline Model Score (using MSE) (Top: Training; Bottom: Test)**
 
 **Table 1: Baseline Model (using MSE) Score**
 ```
@@ -102,7 +108,7 @@ Time      : 1.7 s
 
 The process was also repeated using the cross correlation coefficient (rather, the inverse thereof, to be consistent with MSE: smaller number is more similar) as a similarity metric with comparable results, but the training time was cut approximately in half.
 
-**Figure 5: Baseline Model Score (using xcor) (Top: Training; Bottom: Test)**
+**Figure 6: Baseline Model Score (using xcor) (Top: Training; Bottom: Test)**
 
 **Table 2: Baseline Model Score (using xcor)**
 
@@ -132,7 +138,7 @@ Varying the random seed (affecting only the first selected template), the follow
 
 ![Templates](images/templates-mse-n8-seed1138.png)
 
-**Figure 6: Visualization of selected templates with different random seeds**
+**Figure 7: Visualization of selected templates with different random seeds**
 
 It took about 20 seconds to extract the features.
 
@@ -157,7 +163,7 @@ Second, the templates corresponding to those weights are plotted. The following 
 
 ![](images/logistic-strongest-predictors-mse-seed1138.png)
 
-**Figure 7: Binned predictor templates for various similarity metrics and random seeds**
+**Figure 8: Binned predictor templates for various similarity metrics and random seeds**
 
 #### Observations from Logistic Regression results
 
@@ -198,4 +204,4 @@ Observations:
 
 
 ## Contact and Further Information
-TBD
+Feel free to email me at dgkohler@gmail.com with any questions or comments.
