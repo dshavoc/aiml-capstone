@@ -142,20 +142,22 @@ The engineered features are fed into a Logistic Regression model, with 5-fold cr
 
 #### Explore the results of the Logistic Regression model
 
-The weights produced were:
-```
-[-1.17710291, -3.58454648, -1.01623783,  0.30218646, -1.72999853,
-  2.97258259,  2.57579714, -4.10404905]
-```
-
-The weights are binned as follows:
+First, the weights are binned as follows:
 * Normal templates: Bottom 40% 
 * Abnormal templates: Top 40%
 * Neutral templates: Middle 20%
 
-![](images/logistic-strongest-predictors-1138.png)
+Second, the templates corresponding to those weights are plotted. The following are the predictors for the four Logistic Regression runs that are captured in the Results section:
 
-**Figure 7: Predictor templates, binned**
+![](images/logistic-strongest-predictors-xcor-seed11.png)
+
+![](images/logistic-strongest-predictors-xcor-seed1138.png)
+
+![](images/logistic-strongest-predictors-mse-seed11.png)
+
+![](images/logistic-strongest-predictors-mse-seed1138.png)
+
+**Figure 7: Binned predictor templates for various similarity metrics and random seeds**
 
 #### Observations from Logistic Regression results
 
@@ -164,20 +166,24 @@ The weights are binned as follows:
 
 ## Results
 
-**Table 2: Model Comparison**
+**Table 2: Model and Feature Engineering Comparison**
 
-| model_name           |   train_time |   train_acc |   train_f3 |   test_acc |   test_f3 |
-|:---------------------|-------------:|------------:|-----------:|-----------:|----------:|
-| Baseline (mse)       |       1.8738 |      0.9308 |     0.9873 |     0.9245 |    0.9863 |
-| Baseline (xcor)      |       0.8210 |      0.9297 |     0.9875 |     0.9237 |    0.9873 |
-| Logistic             |       0.0095 |      0.9852 |     0.9931 |     0.9803 |    0.9900 |
-| Logistic (seed 1138) |       0.0230 |      0.9850 |     0.9927 |     0.9795 |    0.9899 |
+| model_name                 |   train_time |   train_acc |   train_f3 |   test_acc |   test_f3 |
+|:---------------------------|-------------:|------------:|-----------:|-----------:|----------:|
+| Baseline mse               |       1.9024 |      0.928  |     0.9876 |     0.918  |    0.9852 |
+| Baseline xcor              |       0.8792 |      0.9297 |     0.9875 |     0.9237 |    0.9862 |
+| Logistic (xcor, seed 11)   |       0.033  |      0.6889 |     0.9329 |     0.6932 |    0.9303 |
+| Logistic (xcor, seed 1138) |       0.0638 |      0.6148 |     0.9325 |     0.6259 |    0.931  |
+| Logistic (mse, seed 11)    |       0.009  |      0.9855 |     0.9913 |     0.9779 |    0.9874 |
+| Logistic (mse, seed 1138)  |       0.0188 |      0.985  |     0.9919 |     0.9803 |    0.9923 |
 
 Observations:
 * The baseline model (median template matching) performed almost identically regardless of which similarity metric was used.
-* The Logistic Regression model scores significantly higher than the baseline because it is able to match sample waveforms against 8 templates instead of the single median templates, and gains the ability to describe more morphological features.
-* There's a distinct difference between training time of the two represented Logistic models, but they should be approximately the same.
-    * Author's Note: I will repeat these measurements in the second Capstone submission, but I'm out of time for the first submission.
+* The Logistic Regression model was highly affected by the similarity function used to select templates, with xcor producing accuracy percentages down by about 30%, and and F3 score down by about 5% from baseline; however mse produced even better results, with accuracy up about 6% (to about 98%) and F3 score up 1% (about 99%)!
+    * The Logistic Regression model should be able to score higher than the baseline because it is able to match sample waveforms against 8 templates instead of the single median template, therefore gains the ability to describe more morphological features.
+* The training time recorded for Logistic Regression does not include feature engineering, which took significantly longer than the model training itself.
+    * ~19 s for mse
+    * ~8 s for xcor
 
 ## Next steps
 * Try de-trending the input waveforms
